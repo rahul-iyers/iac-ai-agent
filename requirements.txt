@@ -5,3 +5,5 @@ python-hcl2
 mcp
 uvicorn
 requests
+openai
+os
