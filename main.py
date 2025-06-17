@@ -19,9 +19,10 @@ def analyze_with_llm(terraform_code: str) -> str:
     messages = [
         HumanMessage(content=(
             "You are an expert in Terraform infrastructure and cloud security. "
-            "Analyze the following Terraform code and return a short summary of any issues, "
-            "potential security risks, and optimization suggestions:\n\n"
-            f"{terraform_code}"
+            "Analyze the following Terraform code and return a short and efficient summary of any issues, "
+            "potential security risks, and optimization suggestions. These comments should be "
+            "beneficial as a comment on a developer's pull request in GitHub."
+            f"Terraform Code:\n\n{terraform_code}"
         ))
     ]
 
@@ -58,7 +59,7 @@ def detect_provider(tf_code: str) -> str:
     
 
 # Create an MCP server
-mcp = FastMCP("Demo")
+mcp = FastMCP("Terraform MCP Server")
 
 @mcp.tool()
 def extract_tf_blocks(terraform_code: str) -> list[str]:
@@ -106,7 +107,7 @@ def analyze_azure(terraform_code: str) -> str:
     Analyze Azure Terraform resources for best practices.
     (Stub for now)
     """
-    return "Analyzed Azure resources."
+    return analyze_with_llm(terraform_code)
 
 
 @mcp.tool()
@@ -115,14 +116,7 @@ def analyze_gcp(terraform_code: str) -> str:
     Analyze GCP Terraform resources for best practices.
     (Stub for now)
     """
-    return "Analyzed GCP resources."
-
-
-# Add a dynamic greeting resource
-@mcp.resource("greeting://{name}")
-def get_greeting(name: str) -> str:
-    """Get a personalized greeting"""
-    return f"Hello, {name}!"
+    return analyze_with_llm(terraform_code)
 
 if __name__ == "__main__":
     print("Starting MCP Server")
