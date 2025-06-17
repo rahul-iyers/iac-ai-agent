@@ -118,7 +118,5 @@ def analyze_gcp(terraform_code: str) -> str:
     return analyze_with_llm(terraform_code)
 
 if __name__ == "__main__":
-    import uvicorn
-    import os
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(mcp.app(), host="0.0.0.0", port=port)
+    print("Starting MCP Server")
+    mcp.run()
