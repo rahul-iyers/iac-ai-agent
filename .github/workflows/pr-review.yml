@@ -1,5 +1,8 @@
 name: PR LLM Reviewer
 
+permissions:
+    pull-requests: write
+    
 on:
   pull_request:
     types: [opened, synchronize]
