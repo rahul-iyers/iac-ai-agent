@@ -1,4 +1,3 @@
-# server.py
 from mcp.server.fastmcp import FastMCP
 from langchain_community.chat_models import AzureChatOpenAI
 from langchain.schema import HumanMessage
