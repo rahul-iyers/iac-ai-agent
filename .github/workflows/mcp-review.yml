@@ -1,0 +1,24 @@
+name: Terraform MCP Review
+
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+  push:
+    branches:
+      - main
+    paths:
+      - '**.tf'
+
+jobs:
+  analyze-terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Print files for now (stub)
+        run: |
+          echo "Changed TF files:"
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.tf$' || true

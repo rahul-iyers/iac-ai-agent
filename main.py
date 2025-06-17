@@ -96,3 +96,7 @@ def analyze_gcp(terraform_code: str) -> str:
 def get_greeting(name: str) -> str:
     """Get a personalized greeting"""
     return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    print("Starting MCP Server")
+    mcp.run()
