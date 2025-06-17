@@ -1,6 +1,6 @@
 langchain
 langchain-community
 python-dotenv
-hcl2
+python-hcl2
 mcp
 uvicorn
