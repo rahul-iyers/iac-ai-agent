@@ -1,10 +1,10 @@
 provider "aws" {
-  region = "us-east-3"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "unsecure_bucket" {
   bucket = "my-public-bucket-123456"
-  acl    = "public"
+  acl    = "public-read-write"
 }
 
 resource "aws_security_group" "open_sg" {
