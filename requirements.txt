@@ -6,4 +6,3 @@ mcp
 uvicorn
 requests
 openai
-os
