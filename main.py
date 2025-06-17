@@ -1,8 +1,33 @@
 # server.py
 from mcp.server.fastmcp import FastMCP
+from langchain_community.chat_models import AzureChatOpenAI
+from langchain.schema import HumanMessage
+import os
 
-# Create an MCP server
-mcp = FastMCP("Demo")
+from dotenv import load_dotenv
+load_dotenv()
+
+
+def analyze_with_llm(terraform_code: str) -> str:
+    llm = AzureChatOpenAI(
+        azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
+        azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+        api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+        api_version=os.getenv("AZURE_OPENAI_API_VERSION")
+    )
+
+    messages = [
+        HumanMessage(content=(
+            "You are an expert in Terraform infrastructure and cloud security. "
+            "Analyze the following Terraform code and return a short summary of any issues, "
+            "potential security risks, and optimization suggestions:\n\n"
+            f"{terraform_code}"
+        ))
+    ]
+
+    response = llm.invoke(messages)
+    return response.content
+
 
 
 def detect_provider(tf_code: str) -> str:
@@ -30,8 +55,10 @@ def detect_provider(tf_code: str) -> str:
         return "unknown"
     except Exception:
         return "invalid"
+    
 
-
+# Create an MCP server
+mcp = FastMCP("Demo")
 
 @mcp.tool()
 def extract_tf_blocks(terraform_code: str) -> list[str]:
@@ -70,7 +97,7 @@ def analyze_aws(terraform_code: str) -> str:
     Analyze AWS Terraform resources for best practices.
     (Stub for now)
     """
-    return "Analyzed AWS resources."
+    return analyze_with_llm(terraform_code)
 
 
 @mcp.tool()

@@ -13,4 +13,7 @@ dependencies = [
     "openai>=1.88.0",
     "python-hcl2>=7.2.1",
     "uvicorn>=0.34.3",
+    "langchain>=0.3.25",
+    "langchain-community>=0.3.25",
+    "python-dotenv>=1.1.0",
 ]
