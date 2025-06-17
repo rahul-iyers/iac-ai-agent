@@ -120,3 +120,5 @@ def analyze_gcp(terraform_code: str) -> str:
 if __name__ == "__main__":
     print("Starting MCP Server")
     mcp.run()
+
+app = mcp.app
