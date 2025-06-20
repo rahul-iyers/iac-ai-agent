@@ -2,8 +2,12 @@ import os
 import requests
 from openai import AzureOpenAI
 
-with open("diff.txt") as f:
-    diff = f.read()
+# Read PR diff
+try:
+    with open("diff.txt") as f:
+        diff = f.read().strip()
+except Exception:
+    diff = None
 
 # Read terraform validate output
 validate_output = None
@@ -11,12 +15,18 @@ if os.path.exists("tf_validate.txt"):
     with open("tf_validate.txt") as tf:
         validate_output = tf.read().strip()
 
-prompt = (
-    "You are an expert code reviewer. Provide brief, helpful comments for the following PR diff. "
-    "If there are any Terraform validation errors, summarize them and include them as a separate section at the top of your review.\n\n"
-    f"Terraform Validate Output (if any):\n{validate_output}\n\n" if validate_output else ""
-    f"PR Diff:\n\n{diff}"
-)
+# Compose prompt
+if validate_output and not diff:
+    prompt = (
+        "Terraform validation errors were found in this PR. Please fix the following issues before proceeding:\n\n"
+        f"{validate_output}"
+    )
+else:
+    prompt = (
+        ("Terraform validation errors (if any):\n" + validate_output + "\n\n") if validate_output else ""
+        + "You are an expert code reviewer. Provide brief, helpful comments for the following PR diff.\n\n"
+        + (f"PR Diff:\n\n{diff}" if diff else "No code changes detected.")
+    )
 
 client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),
@@ -43,3 +53,4 @@ r = requests.post(
 )
 
 print("Comment status:", r.status_code)
+print("GitHub API response:", r.text)
