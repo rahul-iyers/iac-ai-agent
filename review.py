@@ -15,18 +15,24 @@ if os.path.exists("tf_validate.txt"):
     with open("tf_validate.txt") as tf:
         validate_output = tf.read().strip()
 
+# Read terraform plan output
+plan_output = None
+if os.path.exists("tf_plan.txt"):
+    with open("tf_plan.txt") as tf:
+        plan_output = tf.read().strip()
+
 # Compose prompt
-if validate_output and not diff:
-    prompt = (
-        "Terraform validation errors were found in this PR. Please fix the following issues before proceeding:\n\n"
-        f"{validate_output}"
-    )
+sections = []
+if validate_output:
+    sections.append(f"Terraform validation errors (if any):\n{validate_output}")
+if plan_output:
+    sections.append(f"Terraform plan output (if any):\n{plan_output}")
+if diff:
+    sections.append(f"PR Diff:\n\n{diff}")
 else:
-    prompt = (
-        ("Terraform validation errors (if any):\n" + validate_output + "\n\n") if validate_output else ""
-        + "You are an expert code reviewer. Provide brief, helpful comments for the following PR diff.\n\n"
-        + (f"PR Diff:\n\n{diff}" if diff else "No code changes detected.")
-    )
+    sections.append("No code changes detected.")
+
+prompt = "\n\n".join(sections)
 
 client = AzureOpenAI(
     api_key=os.getenv("AZURE_OPENAI_API_KEY"),

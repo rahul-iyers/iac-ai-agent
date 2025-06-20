@@ -34,6 +34,10 @@ jobs:
         run: terraform validate | tee tf_validate.txt
         continue-on-error: true
 
+      - name: Terraform Plan
+        run: terraform plan -no-color | tee tf_plan.txt
+        continue-on-error: true
+
       - name: Get PR Diff
         run: |
           git fetch origin main
