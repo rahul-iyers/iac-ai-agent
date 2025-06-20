@@ -2,26 +2,17 @@ import os
 import requests
 from openai import AzureOpenAI
 
-# Read PR diff
-try:
-    with open("diff.txt") as f:
-        diff = f.read().strip()
-except Exception:
-    diff = None
+def read_file_safe(filename):
+    if os.path.exists(filename):
+        with open(filename) as f:
+            content = f.read().strip()
+            return content if content else None
+    return None
 
-# Read terraform validate output
-validate_output = None
-if os.path.exists("tf_validate.txt"):
-    with open("tf_validate.txt") as tf:
-        validate_output = tf.read().strip()
+diff = read_file_safe("diff.txt")
+validate_output = read_file_safe("tf_validate.txt")
+plan_output = read_file_safe("tf_plan.txt")
 
-# Read terraform plan output
-plan_output = None
-if os.path.exists("tf_plan.txt"):
-    with open("tf_plan.txt") as tf:
-        plan_output = tf.read().strip()
-
-# Compose prompt
 sections = []
 if validate_output:
     sections.append(f"Terraform validation errors (if any):\n{validate_output}")
@@ -29,8 +20,9 @@ if plan_output:
     sections.append(f"Terraform plan output (if any):\n{plan_output}")
 if diff:
     sections.append(f"PR Diff:\n\n{diff}")
-else:
-    sections.append("No code changes detected.")
+
+if not sections:
+    sections.append("No code changes or Terraform output detected. If you see this message, there may be a critical syntax error preventing Terraform from running.")
 
 prompt = "\n\n".join(sections)
 
