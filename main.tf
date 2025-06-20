@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-7"
 }
 
 resource "aws_s3_bucket" "unsecure_bucket" {
