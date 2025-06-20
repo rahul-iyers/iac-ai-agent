@@ -5,9 +5,17 @@ from openai import AzureOpenAI
 with open("diff.txt") as f:
     diff = f.read()
 
+# Read terraform validate output
+validate_output = None
+if os.path.exists("tf_validate.txt"):
+    with open("tf_validate.txt") as tf:
+        validate_output = tf.read().strip()
+
 prompt = (
-    "You are an expert code reviewer. Provide brief, helpful comments for the following PR diff:\n\n"
-    f"{diff}"
+    "You are an expert code reviewer. Provide brief, helpful comments for the following PR diff. "
+    "If there are any Terraform validation errors, summarize them and include them as a separate section at the top of your review.\n\n"
+    f"Terraform Validate Output (if any):\n{validate_output}\n\n" if validate_output else ""
+    f"PR Diff:\n\n{diff}"
 )
 
 client = AzureOpenAI(

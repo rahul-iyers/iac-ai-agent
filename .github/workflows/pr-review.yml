@@ -24,6 +24,16 @@ jobs:
             python -m pip install --upgrade pip
             pip install -r requirements.txt
 
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate | tee tf_validate.txt
+        continue-on-error: true
+
       - name: Get PR Diff
         run: |
           git fetch origin main
